@@ -24,14 +24,14 @@ def blink(pin):
         return
 
 def pingReddit():
+	global url
 	try:
         	f = urllib.urlopen("http://www.reddit.com/r/all/new/.json");
-    	except Exception:
-        	return False
-    	reddit_links = json.loads(f.read().decode("utf-8"))["data"]["children"][0]
-    	urlNew = reddit_links["data"]["url"]
+	except Exception:
+		return False
+	reddit_links = json.loads(f.read().decode("utf-8"))["data"]["children"][0]
+	urlNew = reddit_links["data"]["url"]
 	print urlNew
-	global url
 	if urlNew != url:
 		url = urlNew
 		return True
