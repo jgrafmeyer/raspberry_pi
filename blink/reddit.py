@@ -5,10 +5,22 @@ import urllib
 
 url = ""
 
+def main():
+	try:
+		GPIO.setmode(GPIO.BOARD)
+		GPIO.setup(11, GPIO.OUT)
+		for i in range(0,50):
+			if pingReddit() == True:
+			        blink(11)
+			time.sleep(1)
+	finally:
+		GPIO.cleanup() 
+	return
+
 def blink(pin):
-        GPIO.output(pin,True)
+        GPIO.output(pin, True)
         time.sleep(5)
-        GPIO.output(pin,GPIO.LOW)
+        GPIO.output(pin, False)
         return
 
 def pingReddit():
@@ -16,8 +28,8 @@ def pingReddit():
         	f = urllib.urlopen("http://www.reddit.com/r/all/new/.json");
     	except Exception:
         	return False
-    	reddit_posts = json.loads(f.read().decode("utf-8"))["data"]["children"][0]
-    	urlNew = reddit_posts["data"]["title"]
+    	reddit_links = json.loads(f.read().decode("utf-8"))["data"]["children"][0]
+    	urlNew = reddit_links["data"]["url"]
 	print urlNew
 	global url
 	if urlNew != url:
@@ -26,12 +38,4 @@ def pingReddit():
 	else:
 		return False
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
-
-for i in range(0,100):
-	if pingReddit() == True:
-	        blink(11)
-	time.sleep(1)
-
-GPIO.cleanup() 
+main()
