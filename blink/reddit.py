@@ -3,39 +3,37 @@ import time
 import json
 import urllib
 
-url = ""
-
 def main():
 	try:
 		GPIO.setmode(GPIO.BOARD)
 		GPIO.setup(11, GPIO.OUT)
+		GPIO.setup(13, GPIO.OUT)
 		for i in range(0,50):
-			if pingReddit() == True:
-			        blink(11)
-			time.sleep(1)
+			link = pingReddit()
+			title = link["data"]["title"]
+			print title
+			nsfw = link["data"]["over_18"]
+			if nsfw == True:
+				blink(13)
+			else:
+				blink(11)
 	finally:
 		GPIO.cleanup() 
 	return
 
 def blink(pin):
         GPIO.output(pin, True)
-        time.sleep(5)
+        time.sleep(1)
         GPIO.output(pin, False)
+	time.sleep(1)
         return
 
 def pingReddit():
-	global url
 	try:
-        	f = urllib.urlopen("http://www.reddit.com/r/all/new/.json");
+        	f = urllib.urlopen("http://www.reddit.com/r/wtf/new/.json");
 	except Exception:
 		return False
-	reddit_links = json.loads(f.read().decode("utf-8"))["data"]["children"][0]
-	urlNew = reddit_links["data"]["url"]
-	print urlNew
-	if urlNew != url:
-		url = urlNew
-		return True
-	else:
-		return False
+	reddit_link = json.loads(f.read().decode("utf-8"))["data"]["children"][0]
+	return reddit_link
 
 main()
